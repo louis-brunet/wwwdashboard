@@ -1,0 +1,39 @@
+version: '3.1'
+
+services:
+
+  # web ui for database (http)
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 8081:8080
+
+  # database
+  db:
+    image: mariadb
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: changeme
+
+  # api
+  dashboard-api:
+    image: louisbrunet/dashboard-api
+    restart: always
+    # ports ? (5174)
+
+  # www 8080
+  web:
+    image: nginx:latest
+    restart: always
+    ports:
+      - 8080:80
+    volumes:
+      - type: bind
+        source: /home/ubuntu/vue-dashboard/dist
+        target: /usr/share/nginx/html
+        read-only: true
+      - type: bind
+        source: ./nginx
+        target: /home/ubuntu/conf.d
+        read-only: true
